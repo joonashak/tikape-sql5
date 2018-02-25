@@ -1,4 +1,4 @@
-package tikape.runko.database;
+package tikape.sql5.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import tikape.runko.domain.Ingredient;
+import tikape.sql5.domain.Ingredient;
 
 public class IngredientDao implements Dao<Ingredient, Integer> {
     
@@ -20,7 +20,8 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
     public Ingredient findOne(Integer key) throws SQLException {
         Connection connection = database.getConnection();
         
-        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Ingredient WHERE id = ?");
+        String sql = "SELECT * FROM Ingredient WHERE id = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, key);
 
         ResultSet rs = stmt.executeQuery();
@@ -29,13 +30,35 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
             return null;
         }
 
-        Ingredient ingredient = new Ingredient(rs.getInt("id"), rs.getString("name"));
+        Ingredient ingredient = ingredientFromResult(rs);
 
         rs.close();
         stmt.close();
         connection.close();
 
         return ingredient;
+    }
+
+    @Override
+    public List<Ingredient> findAll() throws SQLException {
+        Connection connection = database.getConnection();
+        List<Ingredient> ingredients = new ArrayList<>();
+        
+        String sql = "SELECT * FROM Ingredient;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        
+        ResultSet rs = stmt.executeQuery();
+        
+        while (rs.next()) {
+            Ingredient ingredient = ingredientFromResult(rs);
+            ingredients.add(ingredient);
+        }
+        
+        rs.close();
+        stmt.close();
+        connection.close();
+        
+        return ingredients;
     }
 
     public Integer howMany() throws SQLException {
@@ -57,48 +80,35 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
 //        }
 //    }
     
-     private Ingredient save(Ingredient ingredient) throws SQLException {
-
-        Connection conn = database.getConnection();
-        PreparedStatement stmt = conn.prepareStatement("INSERT INTO Ingredient"
-                + " (name)"
-                + " VALUES (?)");
+     public Ingredient save(Ingredient ingredient) throws SQLException {
+        Connection connection = database.getConnection();
+        
+        String sql = "INSERT INTO Ingredient (name) VALUES (?);";
+        PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setString(1, ingredient.getName());
                 
         stmt.executeUpdate();
-        stmt.close();
-
-        stmt = conn.prepareStatement("SELECT * FROM Ingredient"
-                + " WHERE name = ?");
-        stmt.setString(1, ingredient.getName());
-        
-        ResultSet rs = stmt.executeQuery();
-        rs.next(); 
-
-        Ingredient i = new Ingredient(rs.getInt("id"), rs.getString("name"));
 
         stmt.close();
-        rs.close();
+        connection.close();
 
-        conn.close();
-
-        return i;
+        return ingredient;
     }
 
     private Ingredient update(Ingredient ingredient) throws SQLException {
-
-        Connection conn = database.getConnection();
-        PreparedStatement stmt = conn.prepareStatement("UPDATE Ingredient SET"
-                + " id = ?");
-        stmt.setInt(1, ingredient.getId());
+        Connection connection = database.getConnection();
+        Integer id = ingredient.getId();
         
+        String sql = "UPDATE Ingredient SET id = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, id);
         
         stmt.executeUpdate();
 
         stmt.close();
-        conn.close();
+        connection.close();
 
-        return ingredient;
+        return findOne(id);
     }
 
     @Override
@@ -107,13 +117,24 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
     }
 
     @Override
-    public List<Ingredient> findAll() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void delete(Integer key) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection connection = database.getConnection();
+        
+        String sql = "DELETE FROM Ingredient WHERE id = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, key);
+        
+        stmt.executeUpdate();
+
+        stmt.close();
+        connection.close();
+    }
+    
+    private Ingredient ingredientFromResult(ResultSet rs) throws SQLException {
+        Integer id = rs.getInt("id");
+        String name = rs.getString("name");
+        
+        return new Ingredient(id, name);
     }
     
 }

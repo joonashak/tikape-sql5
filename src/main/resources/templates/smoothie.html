@@ -1,0 +1,28 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Smoothie</title>
+        <meta charset="UTF-8" />
+    </head>
+    <body>
+        <h1 th:utext="${smoothie.name}"></h1>
+        
+        <h3>Recipe:</h3>
+        
+        <table>
+            
+            <tr>
+                <th>Ingredient</th>
+                <th>Amount</th>
+                <th>Instructions</th>
+            </tr>
+            
+            <tr th:each="ingredient : ${smoothie.ingredients}">
+                <td th:utext="${ingredient.name}"></td>
+                <td th:utext="${ingredient.amount}"></td>
+                <td th:utext="${ingredient.info}"></td>
+            </tr>
+            
+        </table>
+    </body>
+</html>

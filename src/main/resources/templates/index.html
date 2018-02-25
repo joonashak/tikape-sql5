@@ -9,16 +9,11 @@
     <body>
         <p>Tähän tulee siistejä smoothieita...</p>
         
-        <ol>
+        <ul>
             <li th:each="smoothie : ${smoothies}">
-                <a href="smoothies/${smoothie.id}/">${smoothie.name}</a>
+                <a th:href="@{/smoothie/${smoothie.id}}" th:utext="${smoothie.name}"></a>
             </li>
-        </ol>
-        
-        <ol>
-            <li><a href="smoothies/">Lisää uusia smoothieita tai ainesosia</a></li>
-            <li><a href="ingredients/">Tilastot</a></li>
-        </ol>
+        </ul>
         
     </body>
     
