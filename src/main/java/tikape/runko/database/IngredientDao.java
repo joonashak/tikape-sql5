@@ -38,59 +38,24 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         return ingredient;
     }
 
-    @Override
-    public List<Ingredient> findAll() throws SQLException {
-        Connection conn = database.getConnection();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Ingredient");
-        
-        ResultSet rs = stmt.executeQuery();
-        
-        
-        List<Ingredient> ingredients = new ArrayList<>();
-        
-        while (rs.next()){
-                       
-            Ingredient ingr = new Ingredient(rs.getInt("id"), rs.getString("name"));
-            
-            ingredients.add(ingr);
-        }
-        
-        if (ingredients.isEmpty()){
-            return null;
-        }
-        
-        rs.close();
-        stmt.close();
-        conn.close();
-        
-        return ingredients;
+    public Integer howMany() throws SQLException {
+        return null;
     }
 
-    @Override
-    public void delete(Integer key) throws SQLException {
-        Connection conn = database.getConnection();
-        PreparedStatement stmt = conn.prepareStatement("DELETE FROM Ingredient WHERE id = ?");
-        stmt.setInt(1, key);
-        stmt.executeUpdate();
-
-        stmt.close();
-        conn.close();
-    }
-
-    @Override
-    public Ingredient saveOrUpdate(Ingredient ingredient) throws SQLException {
-        //Tän pitäis toimia, jos on sopiva koodi Mainissa eli kun halutaan tallentaa,
-        //niin olis tyyliin ingredientdao.saveOrUpdate(new Ingredient(null, "name"));
-        //Mutta tää on siis vaan ehdotus yhden vanhan tehtävän pohjalta eli ei oo välttämättä hyvä.
-        //Toisin sanoen saa kaikin mokomin muuttaa paremmaksi :D
-          
-        
-        if (ingredient.getId() == null) {   
-            return save(ingredient);
-        } else {
-            return update(ingredient);
-        }
-    }
+//    @Override
+//    public Ingredient saveOrUpdate(Ingredient ingredient) throws SQLException {
+//        //Tän pitäis toimia, jos on sopiva koodi Mainissa eli kun halutaan tallentaa,
+//        //niin olis tyyliin ingredientdao.saveOrUpdate(new Ingredient(null, "name"));
+//        //Mutta tää on siis vaan ehdotus yhden vanhan tehtävän pohjalta eli ei oo välttämättä hyvä.
+//        //Toisin sanoen saa kaikin mokomin muuttaa paremmaksi :D
+//          
+//        
+//        if (ingredient.getId() == null) {   
+//            return save(ingredient);
+//        } else {
+//            return update(ingredient);
+//        }
+//    }
     
      private Ingredient save(Ingredient ingredient) throws SQLException {
 
@@ -134,6 +99,21 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         conn.close();
 
         return ingredient;
+    }
+
+    @Override
+    public Ingredient saveOrUpdate(Ingredient object) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Ingredient> findAll() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void delete(Integer key) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

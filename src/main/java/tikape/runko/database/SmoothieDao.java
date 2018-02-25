@@ -78,17 +78,17 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         conn.close();
     }
 
-    @Override
-    public Smoothie saveOrUpdate(Smoothie smoothie) throws SQLException {
-        //Kts. IngredientDaon SaveOrUpdate-metodin kommentit       
-         
-        
-        if (smoothie.getId() == null) {   
-            return save(smoothie);
-        } else {
-            return update(smoothie);
-        }
-    }
+//    @Override
+//    public Smoothie saveOrUpdate(Smoothie smoothie) throws SQLException {
+//        //Kts. IngredientDaon SaveOrUpdate-metodin kommentit       
+//         
+//        
+//        if (smoothie.getId() == null) {   
+//            return save(smoothie);
+//        } else {
+//            return update(smoothie);
+//        }
+//    }
     
     private Smoothie save(Smoothie smoothie) throws SQLException {
 
@@ -133,6 +133,11 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
 
         return smoothie;
     
+    }
+
+    @Override
+    public Smoothie saveOrUpdate(Smoothie object) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
