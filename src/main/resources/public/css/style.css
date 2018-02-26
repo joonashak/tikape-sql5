@@ -21,3 +21,9 @@ h2, h4, form, .list-group {
 .badge-danger a:hover {
     color: white;
 }
+
+h1 {
+    font-style: italic;
+    text-align: center;
+    padding-bottom: 1rem;
+}

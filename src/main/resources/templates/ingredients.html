@@ -1,50 +1,33 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-    <head>
-        <title>Ingredients</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="/css/style.css" />
-    </head>
-    
-    <body>
-        <div class="container">
-            <div class="card">
-                <div class="card-body">
-                    <div th:replace="fragments/header :: header"></div>
+<div class="card-body" th:fragment="main">
 
-                    <h2>Ingredients</h2>
+    <h2>Ingredients</h2>
 
-                    <ul class="list-group ">
-                        <li
-                            th:each="ingredient : ${ingredients}"
-                            th:inline="text"
-                            class="list-group-item d-flex justify-content-between align-items-center"
-                        >
-                            [[${ingredient.name}]]
-                            <span class="badge badge-danger badge-pill">
-                                <a th:href="${'/ingredient/delete/' + ingredient.id}">DELETE</a>
-                            </span>
-                        </li>
-                    </ul>
-                    
-                    <h4>Add new ingredient:</h4>
-                    
-                    <form action="/ingredient" method="post">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon1">Name</span>
-                            </div>
-                            <input type="text" class="form-control" name="name" />
-                            <div class="input-group-append">
-                                <input class="btn btn-outline-secondary" type="submit" value="Add" />
-                            </div>
-                        </div>
-                    </form>
-                </div>
+    <ul class="list-group ">
+        <li
+            th:each="ingredient : ${ingredients}"
+            th:inline="text"
+            class="list-group-item d-flex justify-content-between align-items-center"
+        >
+            [[${ingredient.name}]]
+            <span class="badge badge-danger badge-pill">
+                <a th:href="${'/ingredient/delete/' + ingredient.id}">DELETE</a>
+            </span>
+        </li>
+    </ul>
+
+    <h4>Add new ingredient:</h4>
+
+    <form action="/ingredient" method="post">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Name</span>
+            </div>
+            <input type="text" class="form-control" name="name" />
+            <div class="input-group-append">
+                <input class="btn btn-outline-secondary" type="submit" value="Add" />
             </div>
         </div>
-    </body>
-    
-</html>
+    </form>
+
+</div>

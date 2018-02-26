@@ -1,0 +1,43 @@
+
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <title>The Smoothie Machine</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+    </head>
+    
+    <body>
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                    
+                    <div class="header">
+                        <h1>The Smoothie Machine</h1>
+                        
+                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                            <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <a href="/smoothies" class="nav-link">Smoothies</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/ingredients" class="nav-link">Ingredients</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/stats" class="nav-link">Statistics</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    
+                    <div th:replace="${viewName} :: main"></div>
+                    
+                </div>
+            </div>
+        </div>
+    </body>
+    
+</html>

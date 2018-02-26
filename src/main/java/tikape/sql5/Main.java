@@ -11,6 +11,7 @@ import tikape.sql5.database.IngredientDao;
 import tikape.sql5.database.SmoothieDao;
 import tikape.sql5.domain.Ingredient;
 import tikape.sql5.domain.Smoothie;
+import static tikape.sql5.ui.ModelAndView.createView;
 
 public class Main {
 
@@ -25,7 +26,8 @@ public class Main {
         get("/", (req, res) -> {
             HashMap model = new HashMap<>();
 
-            return new ModelAndView(model, "index");
+            // TODO
+            return createView("ingredients", model);
         }, new ThymeleafTemplateEngine());
         
         get("/smoothies", (req, res) -> {
@@ -70,7 +72,7 @@ public class Main {
             HashMap model = new HashMap<>();
             model.put("ingredients", ingredientDao.findAll());
 
-            return new ModelAndView(model, "ingredients");
+            return createView("ingredients", model);
         }, new ThymeleafTemplateEngine());
         
         get("/ingredient/delete/:id", (req, res) -> {
