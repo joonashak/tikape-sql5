@@ -42,7 +42,7 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         Connection connection = database.getConnection();
         List<Smoothie> smoothies = new ArrayList<>();
         
-        String sql = "SELECT * FROM Smoothie;";
+        String sql = "SELECT * FROM Smoothie ORDER BY name ASC;";
         PreparedStatement stmt = connection.prepareStatement(sql);
         
         ResultSet rs = stmt.executeQuery();
@@ -69,38 +69,33 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         closeAll(stmt, connection);
     }
     
+    // TODO: Move to new StatisticsDao (or at least IngredientDao)?
     public List<HashMap> howmany() throws SQLException {
         Connection connection = database.getConnection();
-        List<HashMap> list = new ArrayList<>();
+        List<HashMap> ingredientCounts = new ArrayList<>();
                 
-        String n = "SELECT Ingredient.name, COUNT() FROM SmoothieIngredient INNER JOIN Ingredient ON Ingredient.id = SmoothieIngredient.ingredient_id GROUP BY SmoothieIngredient.ingredient_id;";
-        PreparedStatement stmt = connection.prepareStatement(n);
+        String sql = 
+                  "SELECT Ingredient.name, COUNT(*) AS count "
+                + "FROM SmoothieIngredient "
+                + "INNER JOIN Ingredient ON Ingredient.id = SmoothieIngredient.ingredient_id "
+                + "GROUP BY Ingredient.name "
+                + "ORDER BY Ingredient.name ASC;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        
         ResultSet rs = stmt.executeQuery();
         
         while (rs.next()){
             HashMap ingredient = new HashMap<>();
             ingredient.put("name", rs.getString("name"));
-            ingredient.put("count", rs.getInt("COUNT()"));
+            ingredient.put("count", rs.getInt("count"));
             
-            list.add(ingredient);
+            ingredientCounts.add(ingredient);
         }
 
-        closeAll(stmt, connection);
+        closeAll(rs, stmt, connection);
         
-        return list;
+        return ingredientCounts;
     }
-
-//    @Override
-//    public Smoothie saveOrUpdate(Smoothie smoothie) throws SQLException {
-//        //Kts. IngredientDaon SaveOrUpdate-metodin kommentit       
-//         
-//        
-//        if (smoothie.getId() == null) {   
-//            return save(smoothie);
-//        } else {
-//            return update(smoothie);
-//        }
-//    }
     
     public Smoothie save(Smoothie smoothie) throws SQLException {
         Connection connection = database.getConnection();
@@ -112,23 +107,6 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         stmt.executeUpdate();
         closeAll(stmt, connection);
         return smoothie;
-    }
-
-    private Smoothie update(Smoothie smoothie) throws SQLException {
-        Connection connection = database.getConnection();
-        
-        String sql = "UPDATE Smoothie SET id = ?;";
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setInt(1, smoothie.getId());
-        
-        stmt.executeUpdate();
-        closeAll(stmt, connection);
-        return smoothie;
-    }
-
-    @Override
-    public Smoothie saveOrUpdate(Smoothie object) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void addIngredient(
@@ -213,5 +191,10 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
     ) throws SQLException {
         rs.close();
         closeAll(stmt, connection);
+    }
+
+    @Override
+    public Smoothie saveOrUpdate(Smoothie object) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

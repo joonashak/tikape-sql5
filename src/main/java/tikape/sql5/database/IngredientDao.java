@@ -20,7 +20,7 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
     public Ingredient findOne(Integer key) throws SQLException {
         Connection connection = database.getConnection();
         
-        String sql = "SELECT * FROM Ingredient WHERE id = ?;";
+        String sql = "SELECT * FROM Ingredient WHERE id = ?";
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, key);
 
@@ -40,7 +40,7 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         Connection connection = database.getConnection();
         List<Ingredient> ingredients = new ArrayList<>();
         
-        String sql = "SELECT * FROM Ingredient;";
+        String sql = "SELECT * FROM Ingredient ORDER BY name ASC;";
         PreparedStatement stmt = connection.prepareStatement(sql);
         
         ResultSet rs = stmt.executeQuery();
@@ -53,21 +53,6 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         closeAll(rs, stmt, connection);
         return ingredients;
     }
-
-//    @Override
-//    public Ingredient saveOrUpdate(Ingredient ingredient) throws SQLException {
-//        //Tän pitäis toimia, jos on sopiva koodi Mainissa eli kun halutaan tallentaa,
-//        //niin olis tyyliin ingredientdao.saveOrUpdate(new Ingredient(null, "name"));
-//        //Mutta tää on siis vaan ehdotus yhden vanhan tehtävän pohjalta eli ei oo välttämättä hyvä.
-//        //Toisin sanoen saa kaikin mokomin muuttaa paremmaksi :D
-//          
-//        
-//        if (ingredient.getId() == null) {   
-//            return save(ingredient);
-//        } else {
-//            return update(ingredient);
-//        }
-//    }
     
      public Ingredient save(Ingredient ingredient) throws SQLException {
         Connection connection = database.getConnection();
@@ -80,20 +65,6 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
 
         closeAll(stmt, connection);
         return ingredient;
-    }
-
-    private Ingredient update(Ingredient ingredient) throws SQLException {
-        Connection connection = database.getConnection();
-        Integer id = ingredient.getId();
-        
-        String sql = "UPDATE Ingredient SET id = ?;";
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setInt(1, id);
-        
-        stmt.executeUpdate();
-
-        closeAll(stmt, connection);
-        return findOne(id);
     }
 
     @Override

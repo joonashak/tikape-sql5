@@ -10,8 +10,15 @@ public class Database {
         this.databaseAddress = databaseAddress;
     }
     
-    public Database() throws ClassNotFoundException{
-        this.databaseAddress = "jdbc:sqlite:devDatabase.db";
+    public Database() {
+        
+        if (System.getenv("DATABASE_URL") == null) {
+            // Use test db file
+            this.databaseAddress = "jdbc:sqlite:devDatabase.db";
+            return;
+        }
+        
+        this.databaseAddress = "jdbc:" + System.getenv("DATABASE_URL");
     }
 
     public Connection getConnection() throws SQLException {
