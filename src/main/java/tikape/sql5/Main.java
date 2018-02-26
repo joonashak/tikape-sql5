@@ -25,9 +25,10 @@ public class Main {
 
         get("/", (req, res) -> {
             HashMap model = new HashMap<>();
+            model.put("smoothies", smoothieDao.findAll());
+            model.put("ingredients", ingredientDao.findAll());
 
-            // TODO
-            return createView("ingredients", model);
+            return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());
         
         get("/smoothies", (req, res) -> {
@@ -84,6 +85,13 @@ public class Main {
             return new ModelAndView(model, "index");
         }, new ThymeleafTemplateEngine());
         
+        get("/stats", (req, res) -> {
+            HashMap model = new HashMap<>();
+            model.put("stats", new Statistics(database));
+            
+            return createView("statistics", model);
+        }, new ThymeleafTemplateEngine());
+        
         // Add new ingredient to db
         post("/ingredient", (req, res) -> {
             HashMap model = new HashMap<>();
@@ -116,5 +124,7 @@ public class Main {
 
             return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());
+        
+        
     }
 }
