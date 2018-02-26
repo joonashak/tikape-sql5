@@ -18,13 +18,7 @@ public class Database {
             return;
         }
         
-        String addr = System.getenv("DATABASE_URL");
-        
-        // Heroku supplies DATABASE_URL with postgres:// prefix, which is not
-        // supported by JDBC.
-        addr = addr.replaceFirst("postgres://", "postgresql://");
-        
-        this.databaseAddress = "jdbc:" + addr;
+        this.databaseAddress = System.getenv("JDBC_DATABASE_URL");
     }
 
     public Connection getConnection() throws SQLException {
