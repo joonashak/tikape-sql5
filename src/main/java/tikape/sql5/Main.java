@@ -2,6 +2,7 @@ package tikape.sql5;
 
 import java.util.HashMap;
 import spark.ModelAndView;
+import spark.Spark;
 import static spark.Spark.get;
 import static spark.Spark.post;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
@@ -14,7 +15,12 @@ import tikape.sql5.domain.Smoothie;
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        
+        Spark.staticFileLocation("/public");
+        
         Database database = new Database();
+        SmoothieDao smoothieDao = new SmoothieDao(database);
+        IngredientDao ingredientDao = new IngredientDao(database);
 
         get("/", (req, res) -> {
             HashMap model = new HashMap<>();
@@ -22,10 +28,10 @@ public class Main {
             return new ModelAndView(model, "index");
         }, new ThymeleafTemplateEngine());
         
-        get("/smoothie", (req, res) -> {
+        get("/smoothies", (req, res) -> {
             HashMap model = new HashMap<>();
-            model.put("smoothies", new SmoothieDao(database).findAll());
-            model.put("ingredients", new IngredientDao(database).findAll());
+            model.put("smoothies", smoothieDao.findAll());
+            model.put("ingredients", ingredientDao.findAll());
 
             return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());
@@ -34,17 +40,17 @@ public class Main {
             Integer key = Integer.parseInt(req.params("id"));
             HashMap model = new HashMap<>();
             
-            model.put("smoothie", new SmoothieDao(database).findOne(key));
+            model.put("smoothie", smoothieDao.findOne(key));
 
             return new ModelAndView(model, "smoothie");
         }, new ThymeleafTemplateEngine());
         
         get("/smoothie/delete/:id", (req, res) -> {
-            new SmoothieDao(database).delete(Integer.parseInt(req.params("id")));
+            smoothieDao.delete(Integer.parseInt(req.params("id")));
             
             HashMap model = new HashMap<>();
-            model.put("smoothies", new SmoothieDao(database).findAll());
-            model.put("ingredients", new IngredientDao(database).findAll());
+            model.put("smoothies", smoothieDao.findAll());
+            model.put("ingredients", ingredientDao.findAll());
 
             return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());
@@ -53,40 +59,39 @@ public class Main {
             HashMap model = new HashMap<>();
             
             Smoothie smoothie = new Smoothie(0, req.queryParams("name"));
-            new SmoothieDao(database).save(smoothie);
+            smoothieDao.save(smoothie);
             
-            res.redirect("/smoothie", 303);
+            res.redirect("/smoothies", 303);
             
             return new ModelAndView(model, "index");
         }, new ThymeleafTemplateEngine());
         
-        get("/ingredient", (req, res) -> {
+        get("/ingredients", (req, res) -> {
             HashMap model = new HashMap<>();
-            model.put("viesti", "tervehdys");
+            model.put("ingredients", ingredientDao.findAll());
 
             return new ModelAndView(model, "ingredients");
         }, new ThymeleafTemplateEngine());
         
         get("/ingredient/delete/:id", (req, res) -> {
-            new IngredientDao(database).delete(Integer.parseInt(req.params("id")));
-            
             HashMap model = new HashMap<>();
-            model.put("smoothies", new SmoothieDao(database).findAll());
-            model.put("ingredients", new IngredientDao(database).findAll());
-
-            return new ModelAndView(model, "smoothies");
+            ingredientDao.delete(Integer.parseInt(req.params("id")));
+            
+            res.redirect("/ingredients", 303);
+            
+            return new ModelAndView(model, "index");
         }, new ThymeleafTemplateEngine());
         
         // Add new ingredient to db
         post("/ingredient", (req, res) -> {
-            Ingredient ingredient = new Ingredient(0, req.queryParams("name"), "", "");
-            new IngredientDao(database).save(ingredient);
-            
             HashMap model = new HashMap<>();
-            model.put("smoothies", new SmoothieDao(database).findAll());
-            model.put("ingredients", new IngredientDao(database).findAll());
-
-            return new ModelAndView(model, "smoothies");
+            
+            Ingredient ingredient = new Ingredient(0, req.queryParams("name"), "", "");
+            ingredientDao.save(ingredient);
+            
+            res.redirect("/ingredients", 303);
+            
+            return new ModelAndView(model, "index");
         }, new ThymeleafTemplateEngine());
         
         // Add an (existing) ingredient to a smoothie
@@ -98,13 +103,11 @@ public class Main {
             String amount = req.queryParams("amount");
             String info = req.queryParams("info");
             
-            Ingredient ingredient = 
-                    new IngredientDao(database).findOne(ingredientId);
+            Ingredient ingredient = ingredientDao.findOne(ingredientId);
             ingredient.setAmount(amount);
             ingredient.setInfo(info);
             
-            new SmoothieDao(database)
-                    .addIngredient(smoothieId, ingredient, order);
+            smoothieDao.addIngredient(smoothieId, ingredient, order);
             
             String redirectUrl = "/smoothie/" + smoothieId;
             res.redirect(redirectUrl, 303);

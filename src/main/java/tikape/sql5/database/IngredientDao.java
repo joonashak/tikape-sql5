@@ -31,11 +31,7 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         }
 
         Ingredient ingredient = ingredientFromResult(rs);
-
-        rs.close();
-        stmt.close();
-        connection.close();
-
+        closeAll(rs, stmt, connection);
         return ingredient;
     }
 
@@ -54,15 +50,8 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
             ingredients.add(ingredient);
         }
         
-        rs.close();
-        stmt.close();
-        connection.close();
-        
+        closeAll(rs, stmt, connection);
         return ingredients;
-    }
-
-    public Integer howMany() throws SQLException {
-        return null;
     }
 
 //    @Override
@@ -89,9 +78,7 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
                 
         stmt.executeUpdate();
 
-        stmt.close();
-        connection.close();
-
+        closeAll(stmt, connection);
         return ingredient;
     }
 
@@ -105,9 +92,7 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         
         stmt.executeUpdate();
 
-        stmt.close();
-        connection.close();
-
+        closeAll(stmt, connection);
         return findOne(id);
     }
 
@@ -125,9 +110,7 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         stmt.setInt(1, key);
         
         stmt.executeUpdate();
-
-        stmt.close();
-        connection.close();
+        closeAll(stmt, connection);
     }
     
     private Ingredient ingredientFromResult(ResultSet rs) throws SQLException {
@@ -137,4 +120,18 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         return new Ingredient(id, name);
     }
     
+    private void closeAll(PreparedStatement stmt, Connection connection) 
+            throws SQLException {
+        stmt.close();
+        connection.close();
+    }
+    
+    private void closeAll(
+            ResultSet rs, 
+            PreparedStatement stmt, 
+            Connection connection
+    ) throws SQLException {
+        rs.close();
+        closeAll(stmt, connection);
+    }
 }

@@ -1,0 +1,23 @@
+
+.container {
+    max-width: 50rem;
+    margin: auto;
+    margin-top: 2rem;
+}
+
+h2, h4, form, .list-group {
+    margin-top: 2rem;
+}
+
+.navbar {
+    margin-left: -1.3em;
+    margin-right: -1.3em;
+}
+
+.badge-danger a {
+    color: white;
+}
+
+.badge-danger a:hover {
+    color: white;
+}
