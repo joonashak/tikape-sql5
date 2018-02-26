@@ -5,13 +5,20 @@
     margin-top: 2rem;
 }
 
-h2, h4, form, .list-group {
+h2, h3, h4, form, table, .list-group {
     margin-top: 2rem;
 }
 
+.header {
+    background-color: #e5f4ff;
+    margin: -1.25em;
+    padding: 1.25em;
+    padding-bottom: 0;
+}
+
 .navbar {
-    margin-left: -1.3em;
-    margin-right: -1.3em;
+    margin-left: -1.25em;
+    margin-right: -1.25em;
 }
 
 .badge-danger a {
@@ -26,4 +33,18 @@ h1 {
     font-style: italic;
     text-align: center;
     padding-bottom: 1rem;
+}
+
+h2 {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.15em;
+    margin-bottom: 3rem;
+}
+
+.input-group {
+    max-width: 30rem;
+}
+
+.input-group-text {
+    min-width: 10rem;
 }

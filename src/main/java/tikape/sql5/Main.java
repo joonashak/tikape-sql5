@@ -34,18 +34,20 @@ public class Main {
         get("/smoothies", (req, res) -> {
             HashMap model = new HashMap<>();
             model.put("smoothies", smoothieDao.findAll());
-            model.put("ingredients", ingredientDao.findAll());
 
-            return new ModelAndView(model, "smoothies");
+            return createView("smoothies", model);
         }, new ThymeleafTemplateEngine());
         
         get("/smoothie/:id", (req, res) -> {
             Integer key = Integer.parseInt(req.params("id"));
             HashMap model = new HashMap<>();
+            Smoothie smoothie = smoothieDao.findOne(key);
             
-            model.put("smoothie", smoothieDao.findOne(key));
+            model.put("smoothie", smoothie);
+            model.put("ingredients", ingredientDao.findAll());
+            model.put("nextRow", smoothie.getIngredients().size() + 1);
 
-            return new ModelAndView(model, "smoothie");
+            return createView("smoothie", model);
         }, new ThymeleafTemplateEngine());
         
         get("/smoothie/delete/:id", (req, res) -> {
@@ -64,9 +66,24 @@ public class Main {
             Smoothie smoothie = new Smoothie(0, req.queryParams("name"));
             smoothieDao.save(smoothie);
             
+            // TODO should lead to the new smoothie's page
+            // Requires changes to DAO (return object and enforce unique names)
             res.redirect("/smoothies", 303);
             
             return new ModelAndView(model, "index");
+        }, new ThymeleafTemplateEngine());
+        
+        post("/smoothie/row", (req, res) -> {
+            HashMap model = new HashMap<>();
+            int smoothieId = Integer.parseInt(req.queryParams("smoothie_id"));
+            String redirectUrl = "/smoothies/" + smoothieId;
+
+            if (req.queryParams("ingredient_id") == null) {
+                System.out.println("!!!###*** NO INGREDIENT ID SUPPLIED");
+            }
+            
+            res.redirect("/smoothie/" + smoothieId, 303);
+            return createView("/smoothies", model);
         }, new ThymeleafTemplateEngine());
         
         get("/ingredients", (req, res) -> {

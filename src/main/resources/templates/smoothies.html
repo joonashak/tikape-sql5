@@ -1,118 +1,35 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    
-    <head>
-        <title>smoothies</title>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="/css/style.css" />
-    </head>
-    
-    <body>
-        <div class="container">
-            <div class="card">
-                <div class="card-body">
-                    <div th:replace="fragments/header :: header"></div>
-        
-                    <h4>Smoothiet</h4>
-                    
-                    <ul class="list-group">
-                        <li 
-                            th:each="smoothie : ${smoothies}"
-                            th:inline="text"
-                            class="list-group-item d-flex justify-content-between align-items-center"
-                        >
-                            <a th:href="${'/smoothie/' + smoothie.id}" th:utext="${smoothie.name}"></a>
-                            <span class="badge badge-danger badge-pill">
-                                <a th:href="${'/smoothie/delete/' + smoothie.id}">DELETE</a>
-                            </span>
-                        </li>
-                    </ul>
-        
-                    <h4>Raaka-aineet</h4>
-                    <ul class="list-group">
-                        <li 
-                            th:each="ingredient : ${ingredients}" 
-                            th:inline="text"                            
-                            class="list-group-item d-flex justify-content-between align-items-center"
-                        >
-                            [[${ingredient.name}]]
-                            <span class="badge badge-danger badge-pill">
-                                <a th:href="${'/ingredient/delete/' + ingredient.id}">
-                                    DELETE
-                                </a>
-                            </span>
-                        </li>
-                    </ul>
-        
-                    <h4>Lisää smoothie:</h4>
-                    
-                    <form method="POST" action="/smoothie">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon1">Name</span>
-                            </div>
-                        
-                            <input type="text" class="form-control" name="name" /><br/>
-                            <div class="input-group-append">
-                                <input class="btn btn-outline-secondary" type="submit" value="Add" />
-                            </div>
-                        </div>    
-                    </form>
-        
-                    <h4>Lisää raaka-aine:</h4>
-        
-                    <form method="POST" action="/ingredient">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon1">Name</span>
-                            </div>
-                            <input type="text" class="form-control" name="name" /><br/>
-                            <div class="input-group-append">
-                            <input class="btn btn-outline-secondary" type="submit" value="Add" />
-                            </div>
-                        </div>
-                    </form>
-        
-                    <h4>Lisää uusi rivi smoothiereseptiin</h4>
-        
-                    <form method="POST" action="/ingredient/add">
-                        Smoothien nimi:<br/>
-                        <select name="smoothie">
-                            <option
-                                th:each="smoothie : ${smoothies}"
-                                th:value="${smoothie.id}"
-                                th:utext="${smoothie.name}"
-                            >
-                            </option>
-                        </select>
-                        <br/>
-                        Lisättävä raaka-aine<br/>
-                        <select name="ingredient">
-                            <option
-                                th:each="ingredient : ${ingredients}"
-                                th:value="${ingredient.id}"
-                                th:utext="${ingredient.name}"
-                            >
-                            </option>
-                        </select>
-                        <br/>
-                        Järjestysnro<br/>
-                        <input type="text" name="order" /><br/>
-                        Määrä<br/>
-                        <input type="text" name="amount" /><br/>
-                        Ohjeteksti<br/>
-                        <input type="text" name="info" /><br/>
-                        <input type="submit" value="Lisää"/>
-                    </form>
-        
-                    <br/>
-                    <a class="btn btn-primary" href="../" role="button" >Aloitussivulle</a>
-                        
-                    
-                </div>
+
+<div class="card-body" th:fragment="main">
+
+    <h2>Smoothies</h2>
+
+    <ul class="list-group ">
+        <li
+            th:each="smoothie : ${smoothies}"
+            class="list-group-item d-flex justify-content-between align-items-center"
+        >
+            <a 
+                th:href="${'/smoothie/' + smoothie.id}" 
+                th:utext="${smoothie.name}"
+            ></a>
+            <span class="badge badge-danger badge-pill">
+                <a th:href="${'/smoothie/delete/' + smoothie.id}">DELETE</a>
+            </span>
+        </li>
+    </ul>
+
+    <h4>Add new smoothie:</h4>
+
+    <form action="/smoothie" method="post">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Name</span>
+            </div>
+            <input type="text" class="form-control" name="name" />
+            <div class="input-group-append">
+                <input class="btn btn-outline-secondary" type="submit" value="Add" />
             </div>
         </div>
-    </body>
+    </form>
     
-</html>
+</div>

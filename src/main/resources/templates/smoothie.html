@@ -1,40 +1,69 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Smoothie</title>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="/css/style.css" />
-    </head>
-    <body>
-        <div class="container">
-            <div class="card">
-                <div class="card-body">
-                    <div th:replace="fragments/header :: header"></div>
-        
-                    <h1 th:utext="${smoothie.name}"></h1>
-        
-        
-                    <h3>Recipe:</h3>
-        
-        
-                    <table>
-            
-                    <tr>
-                        <th>Ingredient</th>
-                        <th>Amount</th>
-                        <th>Instructions</th>
-                    </tr>
-            
-                    <tr th:each="ingredient : ${smoothie.ingredients}">
-                        <td th:utext="${ingredient.name}"></td>
-                        <td th:utext="${ingredient.amount}"></td>
-                        <td th:utext="${ingredient.info}"></td>
-                    </tr>
-            
-                    </table>
-                </div>
-            </div>
+
+<div class="card-body" th:fragment="main">
+
+    <h2 th:utext="${smoothie.name}"></h2>
+
+    <table class="table">
+        <thead class="thead-light">
+            <th>Ingredient</th>
+            <th>Amount</th>
+            <th>Instructions</th>
+        </thead>
+
+        <tr th:each="ingredient : ${smoothie.ingredients}">
+            <td th:utext="${ingredient.name}"></td>
+            <td th:utext="${ingredient.amount}"></td>
+            <td th:utext="${ingredient.info}"></td>
+        </tr>
+    </table>
+    
+    <h4>Add new row to this recipe:</h4>
+
+    <form action="/smoothie/row" method="post">
+        <div class="input-group mb-3">
+            <select name="ingredient_id" class="custom-select">
+                <option selected="selected" disabled="disabled" hidden="hidden">Select ingredient...</option>
+                <option
+                    th:each="ingredient : ${ingredients}"
+                    th:value="${ingredient.id}"
+                    th:utext="${ingredient.name}"
+                >
+                </option>
+            </select>
         </div>
-    </body>
-</html>
+        
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">...or create new</span>
+            </div>
+            <input type="text" class="form-control" name="ingredient_name" />
+        </div>
+        
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Sequence #</span>
+            </div>
+            <input type="text" class="form-control" name="order" th:value="${nextRow}" />
+        </div>
+        
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Amount</span>
+            </div>
+            <input type="text" class="form-control" name="name" />
+        </div>
+        
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Instructions</span>
+            </div>
+            <input type="text" class="form-control" name="name" />
+        </div>
+        
+        <div class="input-group mb-3">
+            <input type="submit" class="btn btn-primary" value="Add row" />
+        </div>
+        
+        <input type="hidden" name="smoothie_id" th:value="${smoothie.id}" />
+    </form>
+</div>
