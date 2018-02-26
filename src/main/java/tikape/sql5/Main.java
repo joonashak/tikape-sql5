@@ -31,9 +31,8 @@ public class Main {
         get("/", (req, res) -> {
             HashMap model = new HashMap<>();
             model.put("smoothies", smoothieDao.findAll());
-            model.put("ingredients", ingredientDao.findAll());
 
-            return new ModelAndView(model, "smoothies");
+            return createView("smoothies", model);
         }, new ThymeleafTemplateEngine());
         
         get("/smoothies", (req, res) -> {
@@ -69,23 +68,35 @@ public class Main {
             HashMap model = new HashMap<>();
             
             Smoothie smoothie = new Smoothie(0, req.queryParams("name"));
-            smoothieDao.save(smoothie);
+            smoothie = smoothieDao.save(smoothie);
             
-            // TODO should lead to the new smoothie's page
-            // Requires changes to DAO (return object and enforce unique names)
-            res.redirect("/smoothies", 303);
+            res.redirect("/smoothie/" + smoothie.getId(), 303);
             
-            return new ModelAndView(model, "index");
+            return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());
         
         post("/smoothie/row", (req, res) -> {
             HashMap model = new HashMap<>();
             int smoothieId = Integer.parseInt(req.queryParams("smoothie_id"));
-            String redirectUrl = "/smoothies/" + smoothieId;
+            Ingredient ingredient = new Ingredient();
 
             if (req.queryParams("ingredient_id") == null) {
-                System.out.println("!!!###*** NO INGREDIENT ID SUPPLIED");
+                ingredient.setName(req.queryParams("ingredient_name"));
+                ingredient = ingredientDao.save(ingredient);
+            } else {
+                Integer integerId = 
+                        Integer.parseInt(req.queryParams("ingredient_id"));
+                ingredient = ingredientDao.findOne(integerId);
             }
+            
+            int order = Integer.parseInt(req.queryParams("order"));
+            String amount = req.queryParams("amount");
+            String info = req.queryParams("info");
+            
+            ingredient.setAmount(amount);
+            ingredient.setInfo(info);
+            
+            smoothieDao.addIngredient(smoothieId, ingredient, order);
             
             res.redirect("/smoothie/" + smoothieId, 303);
             return createView("/smoothies", model);
@@ -104,7 +115,7 @@ public class Main {
             
             res.redirect("/ingredients", 303);
             
-            return new ModelAndView(model, "index");
+            return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());
         
         get("/stats", (req, res) -> {
@@ -123,7 +134,7 @@ public class Main {
             
             res.redirect("/ingredients", 303);
             
-            return new ModelAndView(model, "index");
+            return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());
         
         // Add an (existing) ingredient to a smoothie

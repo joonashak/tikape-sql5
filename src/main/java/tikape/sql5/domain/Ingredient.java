@@ -10,6 +10,9 @@ public class Ingredient {
     String amount = "";
     String info = "";
 
+    public Ingredient() {
+    }
+    
     public Ingredient(String name) {
         this.name = name;
     }

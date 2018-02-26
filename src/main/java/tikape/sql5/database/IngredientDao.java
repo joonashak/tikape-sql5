@@ -54,17 +54,54 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         return ingredients;
     }
     
-     public Ingredient save(Ingredient ingredient) throws SQLException {
+    /**
+     * Find one Ingredient by name.
+     * @param name String to search with
+     * @return Ingredient or null if none found
+     * @throws SQLException 
+     */
+    public Ingredient findByName(String name) throws SQLException {
         Connection connection = database.getConnection();
         
-        String sql = "INSERT INTO Ingredient (name) VALUES (?);";
+        String sql = "SELECT * FROM Ingredient WHERE name = ?;";
         PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setString(1, ingredient.getName());
+        stmt.setString(1, name);
+        
+        ResultSet rs = stmt.executeQuery();
+        
+        if (!rs.next()) {
+            return null;
+        }
+        
+        Ingredient ingredient = ingredientFromResult(rs);
+        closeAll(rs, stmt, connection);
+        return ingredient;
+    }
+    
+     /**
+     * Inserts a row with the given Ingredient.getName() if the name doesn't exist
+     * yet. 
+     * @param ingredient Ingredient to insert into database
+     * @return Inserted or existing Ingredient
+     * @throws SQLException 
+     */
+    public Ingredient save(Ingredient ingredient) throws SQLException {
+        String name = ingredient.getName().trim();
+        Ingredient foundIngredient = findByName(name);
+        
+        if (foundIngredient != null) {
+            return foundIngredient;
+        }
+        
+        Connection connection = database.getConnection();
+        
+        String sql = "INSERT INTO Ingredient (name) VALUES (?)";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, name);
                 
         stmt.executeUpdate();
-
         closeAll(stmt, connection);
-        return ingredient;
+        return findByName(name);
     }
 
     @Override

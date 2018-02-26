@@ -18,6 +18,12 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         this.database = database;
     }
     
+    /**
+     * Find one Smoothie by key.
+     * @param key Database id
+     * @return Smoothie or null if none found
+     * @throws SQLException 
+     */
     @Override
     public Smoothie findOne(Integer key) throws SQLException {
         Connection connection = database.getConnection();
@@ -37,6 +43,11 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         return smoothie;
     }
 
+    /**
+     * Get all Smoothies.
+     * @return List of Smoothies
+     * @throws SQLException
+     */
     @Override
     public List<Smoothie> findAll() throws SQLException {
         Connection connection = database.getConnection();
@@ -54,6 +65,30 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         
         closeAll(rs, stmt, connection);
         return smoothies;
+    }
+    
+    /**
+     * Find one Smoothie by name.
+     * @param name String to search with
+     * @return Smoothie or null if none found
+     * @throws SQLException 
+     */
+    public Smoothie findByName(String name) throws SQLException {
+        Connection connection = database.getConnection();
+        
+        String sql = "SELECT * FROM Smoothie WHERE name = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setString(1, name);
+        
+        ResultSet rs = stmt.executeQuery();
+        
+        if (!rs.next()) {
+            return null;
+        }
+        
+        Smoothie smoothie = smoothieFromResults(rs);
+        closeAll(rs, stmt, connection);
+        return smoothie;
     }
 
     @Override
@@ -76,8 +111,8 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
                 
         String sql = 
                   "SELECT Ingredient.name, COUNT(SmoothieIngredient.ingredient_id) AS count "
-                + "FROM SmoothieIngredient "
-                + "RIGHT JOIN Ingredient ON Ingredient.id = SmoothieIngredient.ingredient_id "
+                + "FROM Ingredient "
+                + "LEFT JOIN SmoothieIngredient ON Ingredient.id = SmoothieIngredient.ingredient_id "
                 + "GROUP BY Ingredient.name "
                 + "ORDER BY Ingredient.name ASC;";
         PreparedStatement stmt = connection.prepareStatement(sql);
@@ -91,22 +126,36 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
             
             ingredientCounts.add(ingredient);
         }
-
+        
         closeAll(rs, stmt, connection);
         
         return ingredientCounts;
     }
     
+    /**
+     * Inserts a row with the given Smoothie.getName() if the name doesn't exist
+     * yet. 
+     * @param smoothie Smoothie to insert into database
+     * @return Inserted or existing Smoothie
+     * @throws SQLException 
+     */
     public Smoothie save(Smoothie smoothie) throws SQLException {
+        String name = smoothie.getName().trim();
+        Smoothie foundSmoothie = findByName(name);
+        
+        if (foundSmoothie != null) {
+            return foundSmoothie;
+        }
+        
         Connection connection = database.getConnection();
         
         String sql = "INSERT INTO Smoothie (name) VALUES (?)";
         PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.setString(1, smoothie.getName());
+        stmt.setString(1, name);
                 
         stmt.executeUpdate();
         closeAll(stmt, connection);
-        return smoothie;
+        return findByName(name);
     }
     
     public void addIngredient(
@@ -114,10 +163,19 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
             Ingredient ingredient, 
             Integer order
     ) throws SQLException {
+        Integer nextRow = nextRecipeRow(smoothieId);
+        
+        if (order < nextRow && nextRow > 1 && order > 0) {
+            // TODO: Move rows
+        } else {
+            order = nextRow;
+        }
+        
         Connection connection = database.getConnection();
         
-        String sql = "INSERT INTO SmoothieIngredient "
-                + "(smoothie_id,ingredient_id,ordering,amount,info) "
+        String sql = 
+                  "INSERT INTO SmoothieIngredient "
+                + "  (smoothie_id,ingredient_id,ordering,amount,info) "
                 + "VALUES (?,?,?,?,?);";
         PreparedStatement stmt = connection.prepareStatement(sql);
         stmt.setInt(1, smoothieId);
@@ -176,6 +234,30 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         smoothie.setIngredients(ingredients);
         
         return smoothie;
+    }
+    
+    private Integer nextRecipeRow(int smoothieId) throws SQLException {
+        Connection connection = this.database.getConnection();
+        Integer nextRow;
+        
+        String sql = 
+                  "SELECT ordering AS last_row "
+                + "FROM SmoothieIngredient "
+                + "WHERE smoothie_id = ? "
+                + "ORDER BY ordering DESC "
+                + "LIMIT 1;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, smoothieId);
+        
+        ResultSet rs = stmt.executeQuery();
+        
+        if (!rs.next()) {
+            return 1;
+        }
+        
+        nextRow = rs.getInt("last_row") + 1;
+        closeAll(rs, stmt, connection);
+        return nextRow;
     }
     
     private void closeAll(PreparedStatement stmt, Connection connection) 
