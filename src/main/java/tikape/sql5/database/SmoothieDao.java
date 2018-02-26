@@ -75,9 +75,9 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         List<HashMap> ingredientCounts = new ArrayList<>();
                 
         String sql = 
-                  "SELECT Ingredient.name, COUNT(*) AS count "
+                  "SELECT Ingredient.name, COUNT(SmoothieIngredient.ingredient_id) AS count "
                 + "FROM SmoothieIngredient "
-                + "INNER JOIN Ingredient ON Ingredient.id = SmoothieIngredient.ingredient_id "
+                + "RIGHT JOIN Ingredient ON Ingredient.id = SmoothieIngredient.ingredient_id "
                 + "GROUP BY Ingredient.name "
                 + "ORDER BY Ingredient.name ASC;";
         PreparedStatement stmt = connection.prepareStatement(sql);
