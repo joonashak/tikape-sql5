@@ -3,26 +3,38 @@
     <head>
         <title>Smoothie</title>
         <meta charset="UTF-8" />
+        <link rel="stylesheet" href="/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/css/style.css" />
     </head>
     <body>
-        <h1 th:utext="${smoothie.name}"></h1>
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                    <div th:replace="fragments/header :: header"></div>
         
-        <h3>Recipe:</h3>
+                    <h1 th:utext="${smoothie.name}"></h1>
         
-        <table>
+        
+                    <h3>Recipe:</h3>
+        
+        
+                    <table>
             
-            <tr>
-                <th>Ingredient</th>
-                <th>Amount</th>
-                <th>Instructions</th>
-            </tr>
+                    <tr>
+                        <th>Ingredient</th>
+                        <th>Amount</th>
+                        <th>Instructions</th>
+                    </tr>
             
-            <tr th:each="ingredient : ${smoothie.ingredients}">
-                <td th:utext="${ingredient.name}"></td>
-                <td th:utext="${ingredient.amount}"></td>
-                <td th:utext="${ingredient.info}"></td>
-            </tr>
+                    <tr th:each="ingredient : ${smoothie.ingredients}">
+                        <td th:utext="${ingredient.name}"></td>
+                        <td th:utext="${ingredient.amount}"></td>
+                        <td th:utext="${ingredient.info}"></td>
+                    </tr>
             
-        </table>
+                    </table>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
