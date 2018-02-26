@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import tikape.sql5.domain.Ingredient;
 import tikape.sql5.domain.Smoothie;
@@ -68,18 +69,25 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         closeAll(stmt, connection);
     }
     
-    public Integer howmany(Integer id) throws SQLException {
+    public List<HashMap> howmany() throws SQLException {
         Connection connection = database.getConnection();
-        
-        String n = "SELECT Ingredient.name, COUNT() FROM SmoothieINgredient INNER JOIN INgredient ON Ingredient.id = SmoothieIngredient.ingredient_id GROUP BY SmoothieIngredient.ingredient_id;";
+        List<HashMap> list = new ArrayList<>();
+                
+        String n = "SELECT Ingredient.name, COUNT() FROM SmoothieIngredient INNER JOIN Ingredient ON Ingredient.id = SmoothieIngredient.ingredient_id GROUP BY SmoothieIngredient.ingredient_id;";
         PreparedStatement stmt = connection.prepareStatement(n);
-        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
         
-        stmt.executeQuery();
+        while (rs.next()){
+            HashMap ingredient = new HashMap<>();
+            ingredient.put("name", rs.getString("name"));
+            ingredient.put("count", rs.getInt("COUNT()"));
+            
+            list.add(ingredient);
+        }
 
         closeAll(stmt, connection);
         
-        return Integer.parseInt(n);
+        return list;
     }
 
 //    @Override

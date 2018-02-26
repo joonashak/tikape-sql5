@@ -3,19 +3,17 @@
 
     <h2>Statistics</h2>
     
-    <table>
-            
-                    <tr>
-                        <th>Ingredient</th>
-                        <th>Amount</th>
-                    </tr>
-            
-                    <tr th:each="ingredient : ${stats.ingredients}">
-                        <td th:utext="${ingredient.name}"></td>
-                        <td th:utext="${stats.count(ingredient.id)}"></td>
-                    </tr>
-            
-                    </table>
-    ...
+    <table class="table">
+        <thead class="thead-light">
+            <th>Ingredient</th>
+            <th>In how many recipe</th>
+        </thead>
+
+        <tr th:each="row : ${stats.ingredients}">
+            <td th:utext="${row.name}"></td>
+            <td th:utext="${row.count}"></td>
+        </tr>
+    </table>
+    
 
 </div>
