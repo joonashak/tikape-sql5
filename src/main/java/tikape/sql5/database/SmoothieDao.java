@@ -67,6 +67,20 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
 
         closeAll(stmt, connection);
     }
+    
+    public Integer howmany(Integer id) throws SQLException {
+        Connection connection = database.getConnection();
+        
+        String n = "SELECT Ingredient.name, COUNT() FROM SmoothieINgredient INNER JOIN INgredient ON Ingredient.id = SmoothieIngredient.ingredient_id GROUP BY SmoothieIngredient.ingredient_id;";
+        PreparedStatement stmt = connection.prepareStatement(n);
+        stmt.setInt(1, id);
+        
+        stmt.executeQuery();
+
+        closeAll(stmt, connection);
+        
+        return Integer.parseInt(n);
+    }
 
 //    @Override
 //    public Smoothie saveOrUpdate(Smoothie smoothie) throws SQLException {
