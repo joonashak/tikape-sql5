@@ -17,6 +17,11 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         
+        if (System.getenv("PORT") != null) {
+            int port = Integer.parseInt(System.getenv("PORT"));
+            Spark.port(port);
+        }
+        
         Spark.staticFileLocation("/public");
         
         Database database = new Database();
