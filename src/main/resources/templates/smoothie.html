@@ -7,18 +7,22 @@
 
     <h2 th:utext="${smoothie.name}"></h2>
 
-    <table class="table">
+    <table class="table table-numbered">
         <thead class="thead-light">
+            <th>#</th>
             <th>Ingredient</th>
             <th>Amount</th>
             <th>Instructions</th>
         </thead>
 
-        <tr th:each="ingredient : ${smoothie.ingredients}">
-            <td th:utext="${ingredient.name}"></td>
-            <td th:utext="${ingredient.amount}"></td>
-            <td th:utext="${ingredient.info}"></td>
-        </tr>
+        <tbody>
+            <tr th:each="ingredient : ${smoothie.ingredients}">
+                <td></td>
+                <td th:utext="${ingredient.name}"></td>
+                <td th:utext="${ingredient.amount}"></td>
+                <td th:utext="${ingredient.info}"></td>
+            </tr>
+        </tbody>
     </table>
     
     <h4>Add new row to this recipe:</h4>

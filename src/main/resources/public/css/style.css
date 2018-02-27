@@ -54,3 +54,17 @@ h2 {
     margin: auto;
     margin-top: 2rem;
 }
+
+.table-numbered {
+    counter-reset: rowNumber;
+}
+
+.table-numbered tbody tr {
+    counter-increment: rowNumber;
+}
+
+.table-numbered tbody tr td:first-child::before {
+    content: counter(rowNumber);
+    min-width: 1em;
+    margin-right: 0.5em;
+}
