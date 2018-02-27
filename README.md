@@ -6,7 +6,7 @@ The goal of this assignment was to create an application that utilizes a databas
 
 The application was built with (NetBeans, GitHub, Heroku...).
 
-The application contains separate pages for recipe index, ingredient index and statistics. With the application user can add and delete new smoothies and ingerdients, compose new recipes with them, and see how many recipes has a ingredient been used in.
+The application contains separate pages for recipe index, ingredient index and statistics. With the application user can add and delete new smoothies and ingerdients, compose new recipes with them, and see how many recipes an ingredient is used in.
 
 ## Licence
 
