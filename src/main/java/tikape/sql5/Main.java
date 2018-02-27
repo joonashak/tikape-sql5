@@ -50,6 +50,10 @@ public class Main {
             model.put("smoothie", smoothie);
             model.put("ingredients", ingredientDao.findAll());
             model.put("nextRow", smoothie.getIngredients().size() + 1);
+            
+            if (req.queryParams("new") != null) {
+                model.put("newSmoothieSuccess", true);
+            }
 
             return createView("smoothie", model);
         }, new ThymeleafTemplateEngine());
@@ -70,7 +74,7 @@ public class Main {
             Smoothie smoothie = new Smoothie(0, req.queryParams("name"));
             smoothie = smoothieDao.save(smoothie);
             
-            res.redirect("/smoothie/" + smoothie.getId(), 303);
+            res.redirect("/smoothie/" + smoothie.getId() + "?new=true", 303);
             
             return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());

@@ -1,5 +1,9 @@
 
 <div class="card-body" th:fragment="main">
+    
+    <div th:if="${newSmoothieSuccess}" class="alert alert-success">
+        New smoothie was created.
+    </div>
 
     <h2 th:utext="${smoothie.name}"></h2>
 
