@@ -163,15 +163,17 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
             Ingredient ingredient, 
             Integer order
     ) throws SQLException {
-        Integer nextRow = nextRecipeRow(smoothieId);
         
+        Integer nextRow = nextRecipeRow(smoothieId);
+        Connection connection = database.getConnection();
+        
+        // Figure out the correct row ordering and shift existing rows,
+        // if necessary
         if (order < nextRow && nextRow > 1 && order > 0) {
-            // TODO: Move rows
+            incrementRowOrder(smoothieId, order);
         } else {
             order = nextRow;
         }
-        
-        Connection connection = database.getConnection();
         
         String sql = 
                   "INSERT INTO SmoothieIngredient "
@@ -185,6 +187,22 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         stmt.setString(5, ingredient.getInfo());
         
         stmt.executeUpdate();
+        closeAll(stmt, connection);
+    }
+    
+    private void incrementRowOrder(Integer smoothieId, Integer order) 
+            throws SQLException {
+        Connection connection = database.getConnection();
+        
+        String sql = 
+                  "UPDATE SmoothieIngredient "
+                + "SET ordering = ordering + 1 "
+                + "WHERE smoothie_id = ? AND ordering >= ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, smoothieId);
+        stmt.setInt(2, order);
+
+        stmt.execute();
         closeAll(stmt, connection);
     }
     
