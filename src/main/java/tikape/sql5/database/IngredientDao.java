@@ -105,12 +105,12 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
     }
 
     @Override
-    public Ingredient saveOrUpdate(Ingredient object) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void delete(Integer key) throws SQLException {
+        
+        if (inUse(key)) {
+            throw new SQLException();
+        }
+        
         Connection connection = database.getConnection();
         
         String sql = "DELETE FROM Ingredient WHERE id = ?;";
@@ -119,6 +119,21 @@ public class IngredientDao implements Dao<Ingredient, Integer> {
         
         stmt.executeUpdate();
         closeAll(stmt, connection);
+    }
+    
+    public boolean inUse(Integer key) throws SQLException {
+        Connection connection = database.getConnection();
+        
+        String sql = 
+                "SELECT id FROM SmoothieIngredient WHERE ingredient_id = ?;";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, key);
+        
+        ResultSet rs = stmt.executeQuery();
+        boolean rowsFound = rs.next();
+        
+        closeAll(rs, stmt, connection);
+        return rowsFound;
     }
     
     private Ingredient ingredientFromResult(ResultSet rs) throws SQLException {

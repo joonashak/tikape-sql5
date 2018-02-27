@@ -1,5 +1,6 @@
 package tikape.sql5;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import spark.ModelAndView;
 import spark.Spark;
@@ -38,6 +39,10 @@ public class Main {
         get("/smoothies", (req, res) -> {
             HashMap model = new HashMap<>();
             model.put("smoothies", smoothieDao.findAll());
+            
+            if (req.queryParams("delete") != null) {
+                model.put("deleteSmoothieSuccess", true);
+            }
 
             return createView("smoothies", model);
         }, new ThymeleafTemplateEngine());
@@ -65,6 +70,8 @@ public class Main {
             model.put("smoothies", smoothieDao.findAll());
             model.put("ingredients", ingredientDao.findAll());
 
+            res.redirect("/smoothies?delete=true", 303);
+            
             return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());
         
@@ -110,14 +117,27 @@ public class Main {
             HashMap model = new HashMap<>();
             model.put("ingredients", ingredientDao.findAll());
 
+            if (req.queryParams("error") != null) {
+                model.put("deleteIngredientError", true);
+            } else if (req.queryParams("delete") != null) {
+                model.put("deleteIngredientSuccess", true);
+            }
+            
             return createView("ingredients", model);
         }, new ThymeleafTemplateEngine());
         
         get("/ingredient/delete/:id", (req, res) -> {
             HashMap model = new HashMap<>();
-            ingredientDao.delete(Integer.parseInt(req.params("id")));
+            String redirectUrl = "/ingredients";
             
-            res.redirect("/ingredients", 303);
+            try {
+                ingredientDao.delete(Integer.parseInt(req.params("id")));
+                redirectUrl += "?delete=true";
+            } catch (SQLException e) {
+                redirectUrl += "?error=true";
+            }
+            
+            res.redirect(redirectUrl, 303);
             
             return new ModelAndView(model, "smoothies");
         }, new ThymeleafTemplateEngine());

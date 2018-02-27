@@ -1,5 +1,15 @@
 
 <div class="card-body" th:fragment="main">
+    
+    <div th:if="${deleteIngredientSuccess}" class="alert alert-success">
+        Ingredient was deleted.
+    </div>
+    
+    <div th:if="${deleteIngredientError}" class="alert alert-danger">
+        Ingredient could not be deleted.
+        It is probably used by a smoothie recipe.
+        Only unused ingredients can be deleted.
+    </div>
 
     <h2>Ingredients</h2>
 

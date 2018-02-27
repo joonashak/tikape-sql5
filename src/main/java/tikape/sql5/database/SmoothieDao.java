@@ -292,9 +292,4 @@ public class SmoothieDao implements Dao<Smoothie, Integer> {
         rs.close();
         closeAll(stmt, connection);
     }
-
-    @Override
-    public Smoothie saveOrUpdate(Smoothie object) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

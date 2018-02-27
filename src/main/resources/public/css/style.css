@@ -49,7 +49,7 @@ h2 {
     min-width: 10rem;
 }
 
-.alert-success {
+.alert-success, .alert-danger {
     max-width: 35rem;
     margin: auto;
     margin-top: 2rem;

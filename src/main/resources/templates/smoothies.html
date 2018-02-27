@@ -1,5 +1,9 @@
 
 <div class="card-body" th:fragment="main">
+    
+    <div th:if="${deleteSmoothieSuccess}" class="alert alert-success">
+        Smoothie was deleted.
+    </div>
 
     <h2>Smoothies</h2>
 
